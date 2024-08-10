@@ -13,7 +13,7 @@ contract CreateOffer is OTCTest {
         vm.prank(alice);
         otc.createOffer(OTC.OfferType.Buy, 10000000000000, 1000000000);
 
-        OTC.Offer[] memory offers = otc.getOrders(OTC.OfferStatus.Initialized);
+        OTC.Offer[] memory offers = otc.getOffers(OTC.OfferStatus.Initialized);
         assertEq(otc.totalOffers(), 1);
         assertEq(offers[0].creator, alice);
         assertEq(uint8(offers[0].offerType), uint8(OTC.OfferType.Buy));

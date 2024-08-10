@@ -267,10 +267,10 @@ contract OTC is ReentrancyGuard, Ownable {
     }
 
     /**
-     * @notice Get all orders by status
+     * @notice Get all offers by status
      * @param offerStatus Offer status
      */
-    function getOrders(
+    function getOffers(
         OfferStatus offerStatus
     ) public view returns (Offer[] memory) {
         uint256 counter = 0;
