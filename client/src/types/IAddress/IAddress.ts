@@ -1,4 +1,5 @@
 export type IAddress = {
   address: string;
-  copy: boolean;
+  copy?: boolean;
+  baseScan?: boolean;
 };
