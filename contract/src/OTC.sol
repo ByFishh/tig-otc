@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
+/// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.20;
 
 import {Errors} from "./utils/Errors.sol";
@@ -11,7 +11,6 @@ import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 /// @title OTC
 /// @notice Over-the-counter trading contract
 contract OTC is ReentrancyGuard, Ownable {
-    using SafeTransferLib for ERC20;
 
     /*//////////////////////////////////////////////////////////////
                                 EVENTS
@@ -20,23 +19,23 @@ contract OTC is ReentrancyGuard, Ownable {
     /**
      *  @notice Event emitted when a new offer is created
      */
-    event CreateOffer(
-        address creator,
-        address inToken,
+    event OfferCreated(
+        address indexed creator,
+        uint256 offerId,
+        OfferType offerType,
         uint256 inAmount,
-        address outToken,
         uint256 outAmount
     );
 
     /**
      *  @notice Event emitted when an offer is cancelled
      */
-    event CancelOffer(uint256 offerId);
+    event OfferCanceled(uint256 offerId);
 
     /**
      *  @notice Event emitted when an offer is filled
      */
-    event FillOffer(uint256 offerId);
+    event OfferFilled(uint256 offerId);
 
     /*//////////////////////////////////////////////////////////////
                                 TYPES
@@ -79,17 +78,17 @@ contract OTC is ReentrancyGuard, Ownable {
     /**
      * @notice Maximum fee bps
      */
-    uint256 public constant MAX_FEE_BPS = 10000;
+    uint256 public constant MAX_BPS = 10_000;
 
     /**
      * @notice Address of the USDC token
      */
-    address public usdcAddress;
+    address public immutable usdcAddress;
 
     /**
      * @notice Address of the TIG token
      */
-    address public tigAddress;
+    address public immutable tigAddress;
 
     /**
      * @notice Fees bps
@@ -115,6 +114,8 @@ contract OTC is ReentrancyGuard, Ownable {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
+    
+
     constructor(
         address initialUsdc,
         address initialTig,
@@ -126,7 +127,9 @@ contract OTC is ReentrancyGuard, Ownable {
 
         if (initialUsdc == address(0) || initialTig == address(0))
             revert Errors.ZeroAddress();
-        if (initialFees > MAX_FEE_BPS) revert Errors.InvalidFees();
+        if (initialFees > MAX_BPS) revert Errors.InvalidFees();
+        if (initialOwner == address(0)) revert Errors.ZeroAddress();
+        if (initialFeesRecipient == address(0)) revert Errors.ZeroAddress();
 
         usdcAddress = initialUsdc;
         tigAddress = initialTig;
@@ -144,7 +147,7 @@ contract OTC is ReentrancyGuard, Ownable {
      * @custom:requires owner
      */
     function setFees(uint256 newFees) public onlyOwner {
-        if (newFees > MAX_FEE_BPS) revert Errors.InvalidFees();
+        if (newFees > MAX_BPS) revert Errors.InvalidFees();
         fees = newFees;
     }
 
@@ -165,26 +168,23 @@ contract OTC is ReentrancyGuard, Ownable {
     /**
      * @notice Create a new offer to buy or sell tokens
      * @param offerType Offer type
-     * @param inToken Input token
      * @param inAmount Input amount
-     * @param outToken Output token
      * @param outAmount Output amount
      * @custom:nonreentrant
      */
     function createOffer(
         OfferType offerType,
-        address inToken,
         uint256 inAmount,
-        address outToken,
         uint256 outAmount
     ) public nonReentrant {
-        if (inToken == address(0) || outToken == address(0))
-            revert Errors.ZeroAddress();
-        if (inToken == outToken) revert Errors.InvalitPair();
-        if (inToken != tigAddress && inToken != usdcAddress)
-            revert Errors.InvalidToken();
-        if (outToken != tigAddress && outToken != usdcAddress)
-            revert Errors.InvalidToken();
+        address inToken = offerType == OfferType.Buy ? usdcAddress : tigAddress;
+        address outToken = offerType == OfferType.Buy
+            ? tigAddress
+            : usdcAddress;
+
+        if (offerType != OfferType.Buy && offerType != OfferType.Sell)
+            revert Errors.InvalidOfferType();
+        if (inAmount == 0 || outAmount == 0) revert Errors.ZeroValue();
 
         SafeTransferLib.safeTransferFrom(
             inToken,
@@ -203,7 +203,13 @@ contract OTC is ReentrancyGuard, Ownable {
             outAmount
         );
 
-        emit CreateOffer(msg.sender, inToken, inAmount, outToken, outAmount);
+        emit OfferCreated(
+            msg.sender,
+            totalOffers,
+            offerType,
+            inAmount,
+            outAmount
+        );
 
         ++totalOffers;
     }
@@ -215,14 +221,14 @@ contract OTC is ReentrancyGuard, Ownable {
      */
     function cancelOffer(uint256 offerId) public nonReentrant {
         Offer memory offer = offers[offerId];
-        if (offer.creator != msg.sender) revert Errors.Unauthorized();
+        if (offer.creator != msg.sender) revert Errors.Unauthorized(); // Also checks if the period is invalid
         if (offer.offerStatus != OfferStatus.Initialized)
             revert Errors.InvalidStatus();
         offers[offerId].offerStatus = OfferStatus.Cancelled;
 
         SafeTransferLib.safeTransfer(offer.inToken, msg.sender, offer.inAmount);
 
-        emit CancelOffer(offerId);
+        emit OfferCanceled(offerId);
     }
 
     /**
@@ -234,17 +240,18 @@ contract OTC is ReentrancyGuard, Ownable {
         Offer memory offer = offers[offerId];
         if (offer.offerStatus != OfferStatus.Initialized)
             revert Errors.InvalidStatus();
+        if (offer.creator == address(0)) revert Errors.InvalidOfferId();
 
         SafeTransferLib.safeTransfer(
             offer.inToken,
             msg.sender,
-            offer.inAmount - (offer.inAmount * fees) / MAX_FEE_BPS
+            offer.inAmount - (offer.inAmount * fees) / MAX_BPS
         );
 
         SafeTransferLib.safeTransfer(
             offer.inToken,
             feesRecipient,
-            (offer.inAmount * fees) / MAX_FEE_BPS
+            (offer.inAmount * fees) / MAX_BPS
         );
 
         SafeTransferLib.safeTransferFrom(
@@ -256,7 +263,7 @@ contract OTC is ReentrancyGuard, Ownable {
 
         offers[offerId].offerStatus = OfferStatus.Completed;
 
-        emit FillOffer(offerId);
+        emit OfferFilled(offerId);
     }
 
     /**
@@ -270,15 +277,17 @@ contract OTC is ReentrancyGuard, Ownable {
 
         for (uint256 i = 0; i < totalOffers; i++) {
             if (offers[i].offerStatus == offerStatus) {
-                counter += 1;
+                ++counter;
             }
         }
 
         Offer[] memory result = new Offer[](counter);
+        counter = 0;
 
         for (uint256 i = 0; i < totalOffers; i++) {
             if (offers[i].offerStatus == offerStatus) {
                 result[counter] = offers[i];
+                ++counter;
             }
         }
         return result;
