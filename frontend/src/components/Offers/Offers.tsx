@@ -26,7 +26,7 @@ const Offers = (props: IOffers) => {
           </Text>
         </Box>
       </Flex>
-      <OffersTable type={props.type} data={props.data} />
+      <OffersTable type={props.type} />
     </RadixCard>
   );
 };

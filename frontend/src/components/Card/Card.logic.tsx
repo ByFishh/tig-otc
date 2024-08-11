@@ -31,6 +31,8 @@ export const useCard = () => {
         </Text>
       ),
       [IUnit.DOLLARD_PER_MONTH]: <></>,
+      [IUnit.USDC]: <></>,
+      [IUnit.DOLLAR_PER_TIG]: <></>,
     };
     return map[unit];
   };

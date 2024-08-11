@@ -1,3 +1,4 @@
+"use client";
 import { Flex, Grid } from "@radix-ui/themes";
 import React from "react";
 import { useGlobalInformation } from "./GlobalInformation.logic";
@@ -8,7 +9,7 @@ const GlobalInformation = () => {
   const logic = useGlobalInformation();
 
   return (
-    <Grid justify="between" align="center" gap="3" columns={{ md: "3", sm: "2" }}>
+    <Grid justify="between" align="center" gap="3" columns={{ sm: "2" }}>
       {logic.items.map((i) => (
         <Card key={uuidv4()} {...i} />
       ))}

@@ -5,8 +5,12 @@ import { v4 as uuidv4 } from "uuid";
 import TableCell from "../TableCell/TableCell";
 import { IOffersTable } from "@/types/IOffersTable/IOffersTable";
 import OffersTableButton from "../OffersTableButton/OffersTableButton";
+import { useOffersTable } from "./OffersTable.logic";
+import { IOfferType } from "@/types/IOfferType/IOfferType";
+import { formatUnits } from "viem";
 
 const OffersTable = (props: IOffersTable) => {
+  const logic = useOffersTable(props);
   return (
     <Table.Root size="3" style={{ width: "100%", height: "320px" }} variant="surface">
       <Table.Header>
@@ -22,16 +26,26 @@ const OffersTable = (props: IOffersTable) => {
       </Table.Header>
 
       <Table.Body>
-        {props.data.map((d) => (
-          <Table.Row key={uuidv4()}>
-            <TableCell>{d.quantity}</TableCell>
-            <TableCell>{d.price}</TableCell>
-            <TableCell>{d.total}</TableCell>
-            <TableCell>
-              <OffersTableButton type={props.type} />
-            </TableCell>
-          </Table.Row>
-        ))}
+        {!!logic.offers?.length &&
+          logic.offers.map((o) => (
+            <Table.Row key={uuidv4()}>
+              <TableCell>
+                {props.type === IOfferType.BUY
+                  ? formatUnits(o.inAmount ?? BigInt(0), 18)
+                  : formatUnits(o.outAmount ?? BigInt(0), 18)}
+              </TableCell>
+              <TableCell>{logic.getPrice({ tig: o.inAmount, usdc: o.outAmount })}</TableCell>
+              <TableCell>
+                {props.type === IOfferType.BUY
+                  ? formatUnits(o.outAmount ?? BigInt(0), 6)
+                  : formatUnits(o.inAmount ?? BigInt(0), 6)}
+              </TableCell>
+
+              <TableCell>
+                <OffersTableButton type={props.type} />
+              </TableCell>
+            </Table.Row>
+          ))}
       </Table.Body>
     </Table.Root>
   );

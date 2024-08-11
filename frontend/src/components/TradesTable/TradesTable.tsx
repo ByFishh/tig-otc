@@ -4,11 +4,9 @@ import React from "react";
 import { headers } from "./TradesTable.data";
 import TableCell from "../TableCell/TableCell";
 import { v4 as uuidv4 } from "uuid";
-import { ITradesTable } from "@/types/ITradesTable/ITradesTable";
 import { useTradesTable } from "./TradesTable.logic";
-import { ITradeKey } from "@/types/ITradeKey/ITradeKey";
 
-const TradesTable = (props: ITradesTable) => {
+const TradesTable = () => {
   const logic = useTradesTable();
 
   return (
@@ -32,7 +30,7 @@ const TradesTable = (props: ITradesTable) => {
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {props.data.map((d) => (
+        {/* {props.data.map((d) => (
           <Table.Row key={uuidv4()}>
             <TableCell>{logic.convertTradesData(ITradeKey.TIME, d.time)}</TableCell>
             <TableCell>{logic.convertTradesData(ITradeKey.FROM, d.from)}</TableCell>
@@ -41,7 +39,7 @@ const TradesTable = (props: ITradesTable) => {
             <TableCell>{logic.convertTradesData(ITradeKey.PRICE, d.price)}</TableCell>
             <TableCell>{logic.convertTradesData(ITradeKey.TOTAL, d.total)}</TableCell>
           </Table.Row>
-        ))}
+        ))} */}
       </Table.Body>
     </Table.Root>
   );
