@@ -37,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Theme appearance="dark" scaling="90%" style={{ minHeight: "initial" }}>
+        <Theme appearance="dark" scaling="90%" accentColor="amber" style={{ minHeight: "initial" }}>
           <App children={children} />
         </Theme>
       </body>

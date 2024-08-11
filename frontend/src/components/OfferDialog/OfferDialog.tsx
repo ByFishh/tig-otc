@@ -25,7 +25,7 @@ const OfferDialog = () => {
           <Dialog.Close>
             <Flex>
               <IconButton style={{ background: "transparent" }} onClick={logic.closeModal}>
-                <Cross1Icon width="15" height="15" />
+                <Cross1Icon width="15" height="15" color="white" />
               </IconButton>
             </Flex>
           </Dialog.Close>
