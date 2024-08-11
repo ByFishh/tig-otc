@@ -1,4 +1,4 @@
-import { z } from 'zod';
-import { cardDataSchema } from '@/schemas/CardData.schema';
+import { cardDataSchema } from "@/schema/CardData.schema";
+import { z } from "zod";
 
 export type ICardData = z.infer<typeof cardDataSchema>;
