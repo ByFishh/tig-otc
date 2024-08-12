@@ -1,6 +1,6 @@
 import { TIG_ADDRESS, USDC_ADDRESS } from "@/const/const";
+import { useBalance } from "@/hooks/useBalance";
 import { useRef, useState } from "react";
-import { useBalance } from "wagmi";
 
 export const useWalletButton = () => {
   const TIGBalance = useBalance({ token: TIG_ADDRESS });

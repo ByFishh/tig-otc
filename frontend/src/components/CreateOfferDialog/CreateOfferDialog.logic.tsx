@@ -8,26 +8,32 @@ import { IOfferType } from "@/types/IOfferType/IOfferType";
 import { erc20Abi, parseEther } from "viem";
 import { OTC_ADDRESS, TIG_ADDRESS, USDC_ADDRESS } from "@/const/const";
 import { IOfferDTO } from "@/types/IOfferDTO/IOfferDTO";
+import { useBalance } from "@/hooks/useBalance";
+import { formatTIG } from "@/utils/formatTIG";
 
 export const useCreateOfferDialog = () => {
   const { data, dispatch } = useDialogs();
   const { writeContract } = useWriteContract();
+  const TIGBalance = useBalance({ token: TIG_ADDRESS });
 
   const {
     handleSubmit,
     control,
     setValue,
+    getValues,
     formState: { isValid, isDirty },
   } = useForm<IOfferDTO>({
     mode: "onChange",
+    defaultValues: {
+      quantity: undefined,
+      price: 1,
+      total: undefined,
+    },
   });
 
   const index = 1.54; // Dollar index
-  const balance = 231; // User balance
 
   const onSubmit: SubmitHandler<IOfferDTO> = (form: IOfferDTO) => {
-    if (!data.type) return; // throw error
-
     if (data.type === IOfferType.BUY) {
       writeContract({
         abi: erc20Abi,
@@ -67,18 +73,34 @@ export const useCreateOfferDialog = () => {
     dispatch({ action: IAction.CLOSE_MODAL });
   }, []);
 
-  const fieldUpdate = (key: string, e: React.ChangeEvent<HTMLInputElement>, onChange: (...event: any[]) => void) => {
+  const fieldUpdate = (key: keyof IOfferDTO, e: React.ChangeEvent<HTMLInputElement>, onChange: (...event: any[]) => void) => {
     const value = Number(e.target.value);
     onChange(value);
+    const currentValues = getValues();
     if (typeof value !== "number") return;
-    if (key === "quantity") setValue("total", value === 0 ? 0 : value * index);
-    if (key === "total") setValue("quantity", value === 0 ? 0 : value / index);
+    if (key === "quantity") setValue("total", value === 0 ? 0 : value * currentValues.price);
+    if (key === "total") setValue("quantity", value === 0 ? 0 : value / currentValues.price);
+    if (key === "price") {
+      setValue("total", value === 0 ? 0 : value * currentValues.quantity);
+    }
   };
 
   const hasEnoughtTIG = (field: number): boolean | string => {
-    if (field > balance) return "The number of TIGs entered is greater than your current balance";
+    if (TIGBalance.balance === undefined) return false;
+    if (field > formatTIG(TIGBalance.balance)) return "The amount of TIGs entered is greater than your current balance";
     return true;
   };
 
-  return { closeModal, data, handleSubmit, onSubmit, control, isValid, isDirty, fieldUpdate, balance, hasEnoughtTIG };
+  return {
+    closeModal,
+    data,
+    handleSubmit,
+    onSubmit,
+    control,
+    isValid,
+    isDirty,
+    fieldUpdate,
+    balance: TIGBalance.balance,
+    hasEnoughtTIG,
+  };
 };

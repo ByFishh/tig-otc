@@ -16,8 +16,7 @@ const Offers = (props: IOffers) => {
             <Text as="p" size="6" weight="medium" mb="1">
               {props.title}
             </Text>
-
-            <Button size="2" style={{ minHeight: "35px" }} onClick={logic.openCreateOffer}>
+            <Button size="2" style={{ minHeight: "35px" }} onClick={logic.openCreateOffer} disabled={!logic.address}>
               <PlusIcon /> Create Offer
             </Button>
           </Flex>

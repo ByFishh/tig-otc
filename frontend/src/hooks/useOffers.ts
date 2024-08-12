@@ -2,11 +2,17 @@ import { abi } from "@/abi/abi";
 import { OTC_ADDRESS } from "@/const/const";
 import { IOffer } from "@/types/IOffer/IOffer";
 import { useEffect, useState } from "react";
+import { ReadContractErrorType } from "viem";
 import { base } from "viem/chains";
 import { useConfig, useReadContract } from "wagmi";
 import { watchContractEvent } from "wagmi/actions";
 
-export const useOffers = (): { buyOffers: IOffer[]; sellOffers: IOffer[] } => {
+export const useOffers = (): {
+  isLoading: boolean;
+  buyOffers: IOffer[];
+  sellOffers: IOffer[];
+  error: ReadContractErrorType | null;
+} => {
   const config = useConfig();
   const [buyOffers, setBuyOffers] = useState<IOffer[]>([]);
   const [sellOffers, setSellOffers] = useState<IOffer[]>([]);
@@ -20,7 +26,7 @@ export const useOffers = (): { buyOffers: IOffer[]; sellOffers: IOffer[] } => {
     },
   });
 
-  const { data } = useReadContract({
+  const { data, isLoading, error } = useReadContract({
     address: OTC_ADDRESS,
     chainId: base.id,
     abi,
@@ -41,6 +47,8 @@ export const useOffers = (): { buyOffers: IOffer[]; sellOffers: IOffer[] } => {
   }, [data]);
 
   return {
+    error,
+    isLoading,
     buyOffers,
     sellOffers,
   };

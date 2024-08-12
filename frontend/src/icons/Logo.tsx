@@ -6,7 +6,7 @@ const Logo = () => {
       <g filter="url(#filter0_d_241_360)">
         <path
           d="M98.5715 100.397H42.7666L70.9973 56.4098M98.5715 100.397L126.802 55.7533L70.9973 56.4098M98.5715 100.397L70.9973 56.4098"
-          stroke="#D7D19F"
+          stroke="#ffc53d"
           strokeWidth="8"
         />
         <path
@@ -14,14 +14,14 @@ const Logo = () => {
           stroke="#F0EDD0"
           strokeWidth="8"
         />
-        <path d="M126.804 55.7536L99.2295 12.4221" stroke="#D7D19F" strokeWidth="8" />
+        <path d="M126.804 55.7536L99.2295 12.4221" stroke="#ffc53d" strokeWidth="8" />
         <circle cx="18" cy="55" r="14" fill="#F0EDD0" />
         <circle cx="45" cy="14" r="14" fill="#F0EDD0" />
         <circle cx="97" cy="14" r="14" fill="#F0EDD0" />
-        <circle cx="71" cy="55" r="14" fill="#D7D19F" />
-        <circle cx="125" cy="55" r="14" fill="#D7D19F" />
-        <circle cx="45" cy="100" r="14" fill="#D7D19F" />
-        <circle cx="97" cy="100" r="14" fill="#D7D19F" />
+        <circle cx="71" cy="55" r="14" fill="#ffc53d" />
+        <circle cx="125" cy="55" r="14" fill="#ffc53d" />
+        <circle cx="45" cy="100" r="14" fill="#ffc53d" />
+        <circle cx="97" cy="100" r="14" fill="#ffc53d" />
       </g>
       <defs>
         <filter

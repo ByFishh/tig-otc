@@ -1,5 +1,5 @@
 "use client";
-import { Flex, Grid } from "@radix-ui/themes";
+import { Grid } from "@radix-ui/themes";
 import React from "react";
 import { useGlobalInformation } from "./GlobalInformation.logic";
 import Card from "../Card/Card";

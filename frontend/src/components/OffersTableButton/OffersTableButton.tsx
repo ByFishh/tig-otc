@@ -7,7 +7,7 @@ import { useOffersTableButton } from "./OffersTableButton.logic";
 const OffersTableButton = (props: IOffersTableButton) => {
   const logic = useOffersTableButton(props);
   return (
-    <Button size="2" style={{ width: "100%" }} onClick={logic.openOffer}>
+    <Button size="1" style={{ width: "100%" }} onClick={logic.openOffer} disabled={!logic.address}>
       {toCapitalize(props.type)}
     </Button>
   );

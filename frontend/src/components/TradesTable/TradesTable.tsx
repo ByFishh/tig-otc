@@ -1,13 +1,23 @@
 "use client";
-import { Table, Text } from "@radix-ui/themes";
+import { Flex, Table, Text } from "@radix-ui/themes";
 import React from "react";
 import { headers } from "./TradesTable.data";
 import TableCell from "../TableCell/TableCell";
 import { v4 as uuidv4 } from "uuid";
 import { useTradesTable } from "./TradesTable.logic";
+import { ITradeKey } from "@/types/ITradeKey/ITradeKey";
+import { formatTIG } from "../../utils/formatTIG";
+import { formatUSDC } from "@/utils/formatUSDC";
 
 const TradesTable = () => {
   const logic = useTradesTable();
+
+  if (!logic.trades.length)
+    return (
+      <Flex width="100%" align="center" justify="center" py="6">
+        <Text>No exchanges recorded in the last 24 hours.</Text>
+      </Flex>
+    );
 
   return (
     <Table.Root
@@ -30,16 +40,16 @@ const TradesTable = () => {
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {/* {props.data.map((d) => (
+        {logic.trades.map((d) => (
           <Table.Row key={uuidv4()}>
             <TableCell>{logic.convertTradesData(ITradeKey.TIME, d.time)}</TableCell>
             <TableCell>{logic.convertTradesData(ITradeKey.FROM, d.from)}</TableCell>
             <TableCell>{logic.convertTradesData(ITradeKey.TO, d.to)}</TableCell>
-            <TableCell>{logic.convertTradesData(ITradeKey.QUANTITY, d.quantity)}</TableCell>
-            <TableCell>{logic.convertTradesData(ITradeKey.PRICE, d.price)}</TableCell>
-            <TableCell>{logic.convertTradesData(ITradeKey.TOTAL, d.total)}</TableCell>
+            <TableCell>{logic.convertTradesData(ITradeKey.QUANTITY, formatTIG(d.inAmount))}</TableCell>
+            <TableCell>{logic.convertTradesData(ITradeKey.PRICE, formatUSDC(d.outAmount) / formatTIG(d.inAmount))}</TableCell>
+            <TableCell>{logic.convertTradesData(ITradeKey.TOTAL, formatUSDC(d.outAmount))}</TableCell>
           </Table.Row>
-        ))} */}
+        ))}
       </Table.Body>
     </Table.Root>
   );
