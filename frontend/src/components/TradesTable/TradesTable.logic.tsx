@@ -4,6 +4,7 @@ import Address from "../Address/Address";
 import DisplayTig from "../DisplayTig/DisplayTig";
 import { IUnit } from "@/types/IUnit/IUnit";
 import DisplayDollar from "../DisplayDollar/DisplayDollar";
+import { ITrade } from "@/types/ITrade/ITrade";
 
 export const useTradesTable = () => {
   const convertTradesData = (key: ITradeKey, value: string | number): JSX.Element | string | number => {
@@ -27,5 +28,6 @@ export const useTradesTable = () => {
     return <Text color="ruby">Error</Text>;
   };
 
-  return { convertTradesData };
+  const trades: ITrade[] = [];
+  return { convertTradesData, trades };
 };

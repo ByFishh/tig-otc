@@ -1,10 +1,11 @@
 import { GlobeIcon } from "@radix-ui/react-icons";
 import { Button, Flex, IconButton, Popover, Text } from "@radix-ui/themes";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import React, { useCallback, useRef, useState } from "react";
+import React from "react";
 import { displayAddress } from "@/utils/displayAddress";
 import { useWalletButton } from "./WalletButton.logic";
-import { formatUnits } from "viem";
+import { formatTIG } from "@/utils/formatTIG";
+import { formatUSDC } from "@/utils/formatUSDC";
 
 const WalletButton = () => {
   const logic = useWalletButton();
@@ -57,7 +58,7 @@ const WalletButton = () => {
                             <Flex justify="between">
                               <Text>USDC:</Text>
                               <Text>
-                                {formatUnits(logic.USDCBalance.data?.value || BigInt(0), 6)}
+                                {formatUSDC(logic.USDCBalance.balance)}
                                 <span style={{ fontSize: ".5rem" }}>$</span>
                               </Text>
                             </Flex>
@@ -65,7 +66,7 @@ const WalletButton = () => {
                             <Flex justify="between">
                               <Text>TIG:</Text>
                               <Text>
-                                {formatUnits(logic.TIGBalance.data?.value || BigInt(0), 18)}
+                                {formatTIG(logic.TIGBalance.balance)}
                                 <span style={{ fontSize: ".5rem" }}>TIG</span>
                               </Text>
                             </Flex>

@@ -16,7 +16,7 @@ const Navbar = () => {
             <Flex align="center" gap="2">
               <Logo />
               <Text weight="bold">
-                TIG <span style={{ color: "#ccb256" }}>OTC</span>
+                TIG <span style={{ color: "#ffc53d" }}>OTC</span>
               </Text>
             </Flex>
             <Flex justify="between" align="center">

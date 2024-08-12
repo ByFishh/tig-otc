@@ -9,11 +9,21 @@ export const useGlobalInformation = () => {
 
   const items: ICard[] = [
     {
-      title: "Last transaction price",
-      description: "Review here the last transaction done",
+      title: "Transactions",
+      description: "Review here all informations relative to transactions",
       data: [
         {
           title: "Last transaction price",
+          value: 0,
+          unit: IUnit.DOLLARD,
+        },
+        {
+          title: "24h Volume",
+          value: 0,
+          unit: IUnit.TIG,
+        },
+        {
+          title: "24h Volume",
           value: 0,
           unit: IUnit.DOLLARD,
         },
@@ -31,22 +41,6 @@ export const useGlobalInformation = () => {
         },
         {
           title: "Market cap",
-          value: 0,
-          unit: IUnit.DOLLARD,
-        },
-      ],
-    },
-    {
-      title: "24h Volume",
-      description: "Review here the global volume during the last 24h",
-      data: [
-        {
-          title: "24h Volume",
-          value: 0,
-          unit: IUnit.TIG,
-        },
-        {
-          title: "24h Volume",
           value: 0,
           unit: IUnit.DOLLARD,
         },

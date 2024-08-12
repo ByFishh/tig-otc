@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { formatUnits } from "viem";
 
 export const useOffersTable = (props: IOffersTable) => {
-  const { buyOffers, sellOffers } = useOffers();
+  const { buyOffers, sellOffers, isLoading, error } = useOffers();
 
   const offers = useMemo(() => {
     if (props.type === IOfferType.BUY) return buyOffers;
@@ -17,5 +17,5 @@ export const useOffersTable = (props: IOffersTable) => {
     return price.toFixed(2);
   };
 
-  return { offers, getPrice };
+  return { offers, getPrice, isLoading, error };
 };
